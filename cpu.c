@@ -73,12 +73,67 @@ aluResults alu (int32_t A, int32_t B, int OP, int imm, int32_t pc) {
 		   break;
  	   case 7 : 
 		   int shiftValue(
-		   results.aluOut = A ^ B;
+		   results.aluOut = (uint32_t)A >> B;
 		   results.branch = false;
 		   results.memWrite = false;
 		   break;
  	   
+ 	   case 8 : 
+	   	   results.aluOut = A >> (uint32_t)imm;
+		   results.branch = false;
+		   results.memWrite = false;
+		   break;
 
+ 	   case 9 : 
+		   int shiftValue(
+		   results.aluOut = (uint32_t)A >> B;
+		   results.branch = false;
+		   results.memWrite = false;
+		   break;
+
+ 	   case 10 : 
+	   	   results.aluOut = (uint32_t)A >> (uint32_t)imm;
+		   results.branch = false;
+		   results.memWrite = false;
+		   break;
+ 	   case 11 : 
+		   int shiftValue(
+		   results.aluOut = (uint32_t)A << B;
+		   results.branch = false;
+		   results.memWrite = false;
+		   break;
+ 	   case 12 : 
+	   	   results.aluOut = (uint32_t)A << (uint32_t)imm;
+		   results.branch = false;
+		   results.memWrite = false;
+		   break;
+ 	   case 13 : 
+	   	   results.aluOut = A * B;
+		   results.branch = false;
+		   results.memWrite = false;
+		   break;
+ 	   case 14 : 
+	   	   results.aluOut = B;
+		   results.branch = false;
+		   results.memWrite = false;
+		   break;
+ 	   case 15 : 
+	   	   results.aluOut = pc + B;
+		   results.branch = false;
+		   results.memWrite = false;
+		   break;
+	   case 16 :
+	   case 17 :	   
+		   results.aluOut = A + B;
+		   results.branch = false;
+		   results.memWrite = true;
+		   break;
+	   case 18 :
+	   case 19 :	   
+		   results.aluOut = A + B;
+		   results.branch = false;
+		   results.memWrite = true;
+		   break;
 int main () {
 	int32_t registers[32];
 	int32_t instMemory[1024];

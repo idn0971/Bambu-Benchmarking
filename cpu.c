@@ -6,16 +6,16 @@
 #define READ(x,y) ((0u == (x & (1<<y)))?0u:1u)
 
 
-struct decodeResults{
-	int32_t selA,selB,selD,dataImm,
-
+//struct decodeResults{
+//	int32_t selA,selB,selD,dataImm,
+//};
 struct aluResults{
 	int32_t aluOut;
 	bool memWrite, branch;
 };
 
 //Binary to Decimal converter
-int BTD(int binary_val){
+/*int BTD(int binary_val){
 	int decimal_val = 0, base = 1, rem;
         while (num > 0)
     {
@@ -25,9 +25,9 @@ int BTD(int binary_val){
         base = base * 2;
     }
 	return decimal_val;
+}*/
 
-
-aluResults alu (int32_t A, int32_t B, int OP, int imm, int32_t pc) {
+struct aluResults alu (int32_t A, int32_t B, int OP, int imm, int32_t pc) {
     struct aluResults results;
        
 	switch ( OP ) {
@@ -72,7 +72,7 @@ aluResults alu (int32_t A, int32_t B, int OP, int imm, int32_t pc) {
 		   results.memWrite = false;
 		   break;
  	   case 7 : 
-		   int shiftValue(
+		//   int shiftValue(
 		   results.aluOut = (uint32_t)A >> B;
 		   results.branch = false;
 		   results.memWrite = false;
@@ -85,7 +85,7 @@ aluResults alu (int32_t A, int32_t B, int OP, int imm, int32_t pc) {
 		   break;
 
  	   case 9 : 
-		   int shiftValue(
+		  // int shiftValue(
 		   results.aluOut = (uint32_t)A >> B;
 		   results.branch = false;
 		   results.memWrite = false;
@@ -97,7 +97,7 @@ aluResults alu (int32_t A, int32_t B, int OP, int imm, int32_t pc) {
 		   results.memWrite = false;
 		   break;
  	   case 11 : 
-		   int shiftValue(
+		  // int shiftValue(
 		   results.aluOut = (uint32_t)A << B;
 		   results.branch = false;
 		   results.memWrite = false;
@@ -130,16 +130,89 @@ aluResults alu (int32_t A, int32_t B, int OP, int imm, int32_t pc) {
 		   break;
 	   case 18 :
 	   case 19 :	   
-		   results.aluOut = A + B;
+		   results.aluOut = pc + 4;
 		   results.branch = false;
 		   results.memWrite = true;
 		   break;
+           case 20:
+		   results.memWrite = false;
+                   if (A == B) 
+			   results.branch = true;
+		   else 
+			   results.branch = false;
+		   results.aluOut = 0;
+		   break;
+           case 21:
+		   results.memWrite = false;
+                   if (A != B) 
+			   results.branch = true;
+		   else 
+			   results.branch = false;
+		   results.aluOut = 0;
+		   break;
+
+           case 23:
+		   results.memWrite = false;
+                   if (A < B)  
+			   results.branch = true;
+		   else 
+			   results.branch = false;
+		   results.aluOut = 0;
+		   break;
+           case 24:
+		   results.memWrite = false;
+                   if (A >= B) 
+			   results.branch = true;
+		   else 
+			   results.branch = false;
+		   results.aluOut = 0;
+           case 25:
+		   results.memWrite = false;
+                   if ((uint32_t) A < (uint32_t)B)
+			   results.branch = true;
+		   else 
+			   results.branch = false;
+		   results.aluOut = 0;
+		   break;
+           case 26:
+		   results.memWrite = false;
+                   if ((uint32_t)A >= (uint32_t)B) 
+			   results.branch = true;
+		   else 
+			   results.branch = false;
+		   results.aluOut = 0;
+		   break;
+         default:
+                   results.aluOut = 0;
+		   results.branch = false;
+		   results.memWrite = false;
+		   break;
+		}
+	return results;
+}
+
+int32_t addressCalculator(int32_t dataImm, bool branchAlu, bool branchControl, bool jumpReg, int32_t dataA, int32_t pc){
+	int32_t newPc;
+	if (branchAlu == true) {
+		if(branchControl == true) {
+			newPc = pc + dataImm;
+		} else if (jumpReg == true) {
+			newPc = ((dataA + dataImm) & 0xfffffffe);
+		} else {
+			newPc = pc + 4;
+		}
+	} else {
+		newPc = pc + 4;
+	}
+	return newPc;
+}
+
 int main () {
 	int32_t registers[32];
 	int32_t instMemory[1024];
 	int32_t memory[8192];
 	int32_t currInst = 0;
-
-	while(true){
-		decode(instMemory[currInst]
 	
+//	while(true){
+//		decode(instMemory[currInst]
+}	

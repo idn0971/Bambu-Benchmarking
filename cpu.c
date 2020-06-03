@@ -1,18 +1,260 @@
 #include <stdint.h>
 #include <stdbool.h>
+#define GETMASK(index, size) (((1 << (size)) - 1) << (index))
+#define READFROM(data, index, size) (((data) & GETMASK((index), (size))) >> (index))
 
-//Return '1' if the bit value at position y within x is '1' and '0' if it's 0 by ANDing x with a bit mask where the bit in y's position is '1' and '0' elsewhere and comparing it to all 0's.  Returns '1' in least significant bit position if the value of the bit is '1', '0' if it was '0'.
-
-#define READ(x,y) ((0u == (x & (1<<y)))?0u:1u)
 
 
 //struct decodeResults{
 //	int32_t selA,selB,selD,dataImm,
 //};
-struct aluResults{
+struct aluResults {
 	int32_t aluOut;
 	bool memWrite, branch;
 };
+
+struct instDecodeResults {
+	uint32_t selA, selB, selD, funct7, funct3, aluop;
+	int32_t	 dataIMM;
+	bool branch, aluImm, jumpReg, memWren, memToReg, regDwe;
+};
+
+int aluDecode(int32_t opcode, int32_t funct3, int32_t funct7) {
+	int aluOpcode;
+	switch (opcode) {
+		case 51 :
+			switch (funct7) {
+				case 0 :
+					switch (funct3) {
+						case 0 :
+							aluOpcode = 0;
+							break;
+						case 7 :
+							aluOpcode = 2;
+							break;
+						case 6:
+							aluOpcode = 3;
+							break;
+						case 4 :
+							aluOpcode = 4;
+							break;
+						case 2 :
+							aluOpcode = 5;
+							break;
+						case 3 :
+							aluOpcode = 6;
+							break;
+						case 5 :
+							aluOpcode = 9;
+							break;
+						case 1 :
+							aluOpcode = 11;
+							break;
+						default :
+							aluOpcode = 31;
+							break;
+					}
+					break;
+				case 32 :
+					switch (funct3) {
+						case 0 :
+							aluOpcode = 1;
+							break;
+						case 5 :
+							aluOpcode = 7;
+							break;
+						default :
+							aluOpcode = 31;
+							break;
+					}
+					break;
+				case 1 :
+					aluOpcode = 13;
+					break;
+				default :
+					aluOpcode = 31;
+					break;
+				}
+			break;
+		case 19 :
+			switch (funct3) {
+				case 0 :
+					aluOpcode = 0;
+					break;
+				case 7 :
+					aluOpcode = 2;
+					break;
+				case 6 :
+					aluOpcode = 3;
+					break;
+				case 4 :
+					aluOpcode = 4;
+					break;
+				case 2 :
+					aluOpcode = 5;
+					break;
+				case 3 :
+					aluOpcode = 6;
+					break;
+				case 1 :
+					aluOpcode = 12;
+					break;
+				case 5 :
+					switch (funct7) {
+						case 32 :
+							aluOpcode = 8;
+							break;
+						case 0 :
+							aluOpcode = 10;
+							break;
+						default :
+							aluOpcode = 31;
+							break;
+						}
+					break;
+				default :
+					aluOpcode = 31;
+					break;
+				}
+		case 55 :
+			aluOpcode = 14;
+			break;
+		case 23 :
+			aluOpcode = 15;
+			break;
+		case 3  :
+			aluOpcode = 16;
+			break;
+		case 35 :
+			aluOpcode = 17;
+			break;
+		case 111:
+			aluOpcode = 18;
+			break;
+		case 103:
+			aluOpcode = 19;
+			break;
+		case 99 :
+			switch (funct3) {
+				case 0 :
+					aluOpcode = 20;
+					break;
+				case 1 :
+					aluOpcode = 21;
+					break;
+				case 4 :
+					aluOpcode = 23;
+					break;
+				case 5 :
+					aluOpcode = 24;
+					break;
+				case 6 :
+					aluOpcode = 25;
+					break;
+				case 7 :
+					aluOpcode = 26;
+					break;
+				default :
+					aluOpcode = 31;
+					break;
+				}
+			break;
+		default :
+			aluOpcode = 31;
+			break;
+		}
+	return aluOpcode;
+}
+
+struct instDecodeResults instDecode(int32_t dataInst) {
+	struct instDecodeResults results;
+	results.selA = READFROM(dataInst, 16, 5);
+	results.selB = READFROM(dataInst, 21, 5);
+	results.selD = READFROM(dataInst, 8, 5);
+	results.funct7 = READFROM(dataInst, 26, 7);
+	results.funct3 = READFROM(dataInst, 13, 3);
+	results.aluop = READFROM(dataInst, 1, 7);
+
+	switch (results.aluop ) {
+		case 99 :
+		       if(READFROM(dataInst, 32, 1) == 1) {
+			results.dataIMM = (0xFFFFF000 | (READFROM(dataInst, 8, 1) << 12) | (READFROM(dataInst, 26, 6) << 5) | (READFROM(dataInst, 9, 4) << 1) | 0);
+			} else {
+			results.dataIMM = ((READFROM(dataInst, 32, 1) << 32) | (READFROM(dataInst, 8, 1) << 12) | (READFROM(dataInst, 26, 6) << 5) | (READFROM(dataInst, 9, 4) << 1) | 0);
+			}
+			break;
+		case 111:
+		       if(READFROM(dataInst, 32, 1) == 1) {
+			results.dataIMM = (0xFFF00000 | (READFROM(dataInst, 13, 8) << 12) | (READFROM(dataInst, 21, 1) << 11) | (READFROM(dataInst, 26, 6) << 5) | (READFROM(dataInst, 22, 4) << 1) | 0);
+			} else {
+			results.dataIMM = ((READFROM(dataInst, 32, 1) << 32) | (READFROM(dataInst, 13, 8) << 12) | (READFROM(dataInst, 21, 1) << 11) | (READFROM(dataInst, 26, 6) << 5) | (READFROM(dataInst, 22, 4) << 1) | 0);
+			}
+			break;
+		case 35:
+		       if(READFROM(dataInst, 32, 1) == 1) {
+			       results.dataIMM = (0xFFFFF800 | (READFROM(dataInst, 26, 6) << 6) | (READFROM(dataInst, 9, 4) << 1) | READFROM(dataInst, 8, 1));
+			 } else {
+		 	       results.dataIMM = ((READFROM(dataInst, 32, 1) << 32) | (READFROM(dataInst, 26, 6) << 6) | (READFROM(dataInst, 9, 4) << 1) | READFROM(dataInst, 8, 1));
+			       }
+			       break;
+		case 55:
+		case 23:
+		       results.dataIMM = (READFROM(dataInst, 13, 20) << 12);
+		       break;
+		default:
+		       if(READFROM(dataInst, 32, 1) == 1) {
+			       results.dataIMM = (0xFFFFF800 | READFROM(dataInst, 21, 11));
+		} else {
+		               results.dataIMM = (0x00000000 | READFROM(dataInst, 21, 11));
+			       }
+			       break;
+			       }
+
+	switch (results.aluop) {
+                case 99  :
+		case 111 :
+		         results.branch = true;
+		         results.jumpReg = false;
+		case 103 :
+		         results.branch = false;
+		         results.jumpReg = true;
+		default  :
+		         results.branch =  false;
+		         results.jumpReg = false;
+	}
+	
+	switch(results.aluop) {
+		case 19 :
+		case 55 :
+		case 23 :
+		case 3  :
+		case 35 :
+		        results.aluImm = true;
+		default :
+		        results.aluImm = false;
+	}
+
+	switch(results.aluop) {
+		case 35 :
+		        results.memWren = true;
+		        results.memToReg = false;
+		case 3 :
+		        results.memWren = false;
+		        results.memToReg = true;
+		default :
+		        results.memWren = false;
+		        results.memToReg = false;
+	}
+	
+	switch(results.aluop) {
+		case 99 :
+		case 35 :
+		        results.regDwe = false;
+		default : 
+		        results.regDwe = true;
+	}
+	return results;
+}
 
 //Binary to Decimal converter
 /*int BTD(int binary_val){
@@ -212,7 +454,16 @@ int main () {
 	int32_t instMemory[1024];
 	int32_t memory[8192];
 	int32_t currInst = 0;
+	int32_t nextInst = 0;
+	int aluOpcode;
+	struct aluResults aluResult;
+	struct instDecodeResults instDecodeResult;
 	
-//	while(true){
-//		decode(instMemory[currInst]
+	while(true){
+		currInst = nextInst;
+		instDecodeResult = instDecode(instMemory[currInst]);
+		aluOpcode = aluDecode(instDecodeResult.opcode, instDecodeResult.funct3, instDecodeResult.funct7);
+		aluA = registers[selA];
+		
 }	
+}

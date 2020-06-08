@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
 #define GETMASK(index, size) (((1 << (size)) - 1) << (index))
@@ -168,44 +169,44 @@ int aluDecode(int32_t opcode, int32_t funct3, int32_t funct7) {
 
 struct instDecodeResults instDecode(int32_t dataInst) {
 	struct instDecodeResults results;
-	results.selA = READFROM(dataInst, 16, 5);
-	results.selB = READFROM(dataInst, 21, 5);
-	results.selD = READFROM(dataInst, 8, 5);
-	results.funct7 = READFROM(dataInst, 26, 7);
-	results.funct3 = READFROM(dataInst, 13, 3);
-	results.aluop = READFROM(dataInst, 1, 7);
+	results.selA = READFROM(dataInst, 15, 5);
+	results.selB = READFROM(dataInst, 20, 5);
+	results.selD = READFROM(dataInst, 7, 5);
+	results.funct7 = READFROM(dataInst, 25, 7);
+	results.funct3 = READFROM(dataInst, 12, 3);
+	results.aluop = READFROM(dataInst, 0, 7);
 
 	switch (results.aluop ) {
 		case 99 :
-		       if(READFROM(dataInst, 32, 1) == 1) {
-			results.dataIMM = (0xFFFFF000 | (READFROM(dataInst, 8, 1) << 12) | (READFROM(dataInst, 26, 6) << 5) | (READFROM(dataInst, 9, 4) << 1) | 0);
+		       if(READFROM(dataInst, 31, 1) == 1) {
+			results.dataIMM = (0xFFFFF000 | (READFROM(dataInst, 7, 1) << 12) | (READFROM(dataInst, 25, 6) << 5) | (READFROM(dataInst, 8, 4) << 1) | 0);
 			} else {
-			results.dataIMM = ((READFROM(dataInst, 32, 1) << 32) | (READFROM(dataInst, 8, 1) << 12) | (READFROM(dataInst, 26, 6) << 5) | (READFROM(dataInst, 9, 4) << 1) | 0);
+			results.dataIMM = ((READFROM(dataInst, 31, 1) << 31) | (READFROM(dataInst, 7, 1) << 12) | (READFROM(dataInst, 25, 6) << 5) | (READFROM(dataInst, 8, 4) << 1) | 0);
 			}
 			break;
 		case 111:
-		       if(READFROM(dataInst, 32, 1) == 1) {
-			results.dataIMM = (0xFFF00000 | (READFROM(dataInst, 13, 8) << 12) | (READFROM(dataInst, 21, 1) << 11) | (READFROM(dataInst, 26, 6) << 5) | (READFROM(dataInst, 22, 4) << 1) | 0);
+		       if(READFROM(dataInst, 31, 1) == 1) {
+			results.dataIMM = (0xFFF00000 | (READFROM(dataInst, 12, 8) << 12) | (READFROM(dataInst, 20, 1) << 11) | (READFROM(dataInst, 25, 6) << 5) | (READFROM(dataInst, 21, 4) << 1) | 0);
 			} else {
-			results.dataIMM = ((READFROM(dataInst, 32, 1) << 32) | (READFROM(dataInst, 13, 8) << 12) | (READFROM(dataInst, 21, 1) << 11) | (READFROM(dataInst, 26, 6) << 5) | (READFROM(dataInst, 22, 4) << 1) | 0);
+			results.dataIMM = ((READFROM(dataInst, 31, 1) << 31) | (READFROM(dataInst, 12, 8) << 12) | (READFROM(dataInst, 20, 1) << 11) | (READFROM(dataInst, 25, 6) << 5) | (READFROM(dataInst, 21, 4) << 1) | 0);
 			}
 			break;
 		case 35:
-		       if(READFROM(dataInst, 32, 1) == 1) {
-			       results.dataIMM = (0xFFFFF800 | (READFROM(dataInst, 26, 6) << 6) | (READFROM(dataInst, 9, 4) << 1) | READFROM(dataInst, 8, 1));
+		       if(READFROM(dataInst, 31, 1) == 1) {
+			       results.dataIMM = (0xFFFFF800 | (READFROM(dataInst, 25, 6) << 6) | (READFROM(dataInst, 8, 4) << 1) | READFROM(dataInst, 7, 1));
 			 } else {
-		 	       results.dataIMM = ((READFROM(dataInst, 32, 1) << 32) | (READFROM(dataInst, 26, 6) << 6) | (READFROM(dataInst, 9, 4) << 1) | READFROM(dataInst, 8, 1));
+		 	       results.dataIMM = ((READFROM(dataInst, 31, 1) << 31) | (READFROM(dataInst, 25, 6) << 6) | (READFROM(dataInst, 8, 4) << 1) | READFROM(dataInst, 7, 1));
 			       }
 			       break;
 		case 55:
 		case 23:
-		       results.dataIMM = (READFROM(dataInst, 13, 20) << 12);
+		       results.dataIMM = (READFROM(dataInst, 12, 20) << 12);
 		       break;
 		default:
-		       if(READFROM(dataInst, 32, 1) == 1) {
-			       results.dataIMM = (0xFFFFF800 | READFROM(dataInst, 21, 11));
+		       if(READFROM(dataInst, 31, 1) == 1) {
+			       results.dataIMM = (0xFFFFF800 | READFROM(dataInst, 20, 11));
 		} else {
-		               results.dataIMM = (0x00000000 | READFROM(dataInst, 21, 11));
+		               results.dataIMM = (0x00000000 | READFROM(dataInst, 20, 11));
 			       }
 			       break;
 			       }
@@ -451,19 +452,36 @@ int32_t addressCalculator(int32_t dataImm, bool branchAlu, bool branchControl, b
 
 int main () {
 	int32_t registers[32];
-	int32_t instMemory[1024];
+	int32_t instMemory[1024] = {[0] = 0x20000113, [4] = 0x00400513, [8] = 0x008000ef, [12] = 0x0400006f, [16] = 0xff810113, [20] = 0x00112223, [24] = 0x00a12023, [28] = 0x00100293, 
+	[32] = 0x00555463, [36] = 0x0180006f, [40] = 0xfff50513, [44] = 0xfe5ff0ef, [48] = 0x00012583, [52] = 0x02b50533, [56] = 0x0080006f, [60] = 0x00100513, [64] = 0x00412083, [68] = 0x00810113,
+	[72] = 0x00008067, [76] = 0x00a00b33};
 	int32_t memory[8192];
 	int32_t currInst = 0;
 	int32_t nextInst = 0;
 	int aluOpcode;
 	struct aluResults aluResult;
 	struct instDecodeResults instDecodeResult;
+	int32_t aluA, aluB;
 	
-	while(true){
+	while(instMemory[currInst] != 0 && currInst < 1024){
 		currInst = nextInst;
 		instDecodeResult = instDecode(instMemory[currInst]);
-		aluOpcode = aluDecode(instDecodeResult.opcode, instDecodeResult.funct3, instDecodeResult.funct7);
-		aluA = registers[selA];
+		aluOpcode = aluDecode(instDecodeResult.aluop, instDecodeResult.funct3, instDecodeResult.funct7);
+		aluA = registers[instDecodeResult.selA];
+		if (instDecodeResult.aluImm == true) {
+			aluB = instDecodeResult.dataIMM;
+		} else 
+			aluB = registers[instDecodeResult.selB];
 		
-}	
+		aluResult = alu (aluA, aluB, aluOpcode, instDecodeResult.selB, currInst);
+		if (aluResult.memWrite == true)
+			memory[aluResult.aluOut] = registers[instDecodeResult.selB];
+		if (instDecodeResult.memToReg == true) 
+			registers[instDecodeResult.selD] = memory[aluResult.aluOut];
+		else
+			registers[instDecodeResult.selD] = aluResult.aluOut;
+		nextInst = addressCalculator(instDecodeResult.dataIMM, aluResult.branch, instDecodeResult.branch, instDecodeResult.jumpReg, aluA, currInst);
+}
+	printf("%d", registers[22]);
+	
 }

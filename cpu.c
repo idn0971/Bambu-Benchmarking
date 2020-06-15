@@ -451,10 +451,8 @@ int32_t addressCalculator(int32_t dataImm, bool branchAlu, bool branchControl, b
 }
 
 int main () {
-	int32_t registers[32];
-	int32_t instMemory[1024] = {[0] = 0x20000113, [4] = 0x00400513, [8] = 0x008000ef, [12] = 0x0400006f, [16] = 0xff810113, [20] = 0x00112223, [24] = 0x00a12023, [28] = 0x00100293, 
-	[32] = 0x00555463, [36] = 0x0180006f, [40] = 0xfff50513, [44] = 0xfe5ff0ef, [48] = 0x00012583, [52] = 0x02b50533, [56] = 0x0080006f, [60] = 0x00100513, [64] = 0x00412083, [68] = 0x00810113,
-	[72] = 0x00008067, [76] = 0x00a00b33};
+	int32_t registers[32] = {0};
+	int32_t instMemory[1024] = {[0] = 0x00a00293};
 	int32_t memory[8192];
 	int32_t currInst = 0;
 	int32_t nextInst = 0;
@@ -482,6 +480,6 @@ int main () {
 			registers[instDecodeResult.selD] = aluResult.aluOut;
 		nextInst = addressCalculator(instDecodeResult.dataIMM, aluResult.branch, instDecodeResult.branch, instDecodeResult.jumpReg, aluA, currInst);
 }
-	printf("%d", registers[22]);
+	printf("%d\n", registers[5]);
 	
 }

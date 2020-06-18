@@ -419,8 +419,8 @@ struct aluResults alu(int32_t A, int32_t B, int OP, int imm, int32_t pc)
 	case 18:
 	case 19:
 		results.aluOut = pc + 4;
-		results.branch = false;
-		results.memWrite = true;
+		results.branch = true;
+		results.memWrite = false;
 		break;
 	case 20:
 		results.memWrite = false;
@@ -507,7 +507,7 @@ int32_t addressCalculator(int32_t dataImm, bool branchAlu, bool branchControl, b
 int main()
 {
 	int32_t registers[32] = {0};
-	int32_t instMemory[1024] = {[0] = 0x20000113 /*, [4] =*/};
+	int32_t instMemory[1024] = {[0] = 0x000000ef};
 	int32_t memory[8192];
 	int32_t currInst = 0;
 	int32_t nextInst = 0;

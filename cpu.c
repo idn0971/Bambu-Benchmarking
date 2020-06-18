@@ -216,12 +216,15 @@ struct instDecodeResults instDecode(int32_t dataInst) {
 		case 111 :
 		         results.branch = true;
 		         results.jumpReg = false;
+			 break;
 		case 103 :
 		         results.branch = false;
 		         results.jumpReg = true;
+			 break;
 		default  :
 		         results.branch =  false;
 		         results.jumpReg = false;
+			 break;
 	}
 	
 	switch(results.aluop) {
@@ -231,28 +234,35 @@ struct instDecodeResults instDecode(int32_t dataInst) {
 		case 3  :
 		case 35 :
 		        results.aluImm = true;
+			break;
 		default :
 		        results.aluImm = false;
+			break;
 	}
 
 	switch(results.aluop) {
 		case 35 :
 		        results.memWren = true;
 		        results.memToReg = false;
+			break;
 		case 3 :
 		        results.memWren = false;
 		        results.memToReg = true;
+			break;
 		default :
 		        results.memWren = false;
 		        results.memToReg = false;
+			break;
 	}
 	
 	switch(results.aluop) {
 		case 99 :
 		case 35 :
 		        results.regDwe = false;
+			break;
 		default : 
 		        results.regDwe = true;
+			break;
 	}
 	return results;
 }
@@ -272,6 +282,7 @@ struct instDecodeResults instDecode(int32_t dataInst) {
 
 struct aluResults alu (int32_t A, int32_t B, int OP, int imm, int32_t pc) {
     struct aluResults results;
+    int temp;
        
 	switch ( OP ) {
 	   case 0 :
@@ -315,7 +326,7 @@ struct aluResults alu (int32_t A, int32_t B, int OP, int imm, int32_t pc) {
 		   results.memWrite = false;
 		   break;
  	   case 7 : 
-		//   int shiftValue(
+		   temp = READFROM(B, 0, 5);
 		   results.aluOut = (uint32_t)A >> B;
 		   results.branch = false;
 		   results.memWrite = false;
@@ -328,7 +339,7 @@ struct aluResults alu (int32_t A, int32_t B, int OP, int imm, int32_t pc) {
 		   break;
 
  	   case 9 : 
-		  // int shiftValue(
+		   temp = READFROM(B, 0, 5);
 		   results.aluOut = (uint32_t)A >> B;
 		   results.branch = false;
 		   results.memWrite = false;
@@ -340,7 +351,7 @@ struct aluResults alu (int32_t A, int32_t B, int OP, int imm, int32_t pc) {
 		   results.memWrite = false;
 		   break;
  	   case 11 : 
-		  // int shiftValue(
+		   temp = READFROM(B, 0, 5);
 		   results.aluOut = (uint32_t)A << B;
 		   results.branch = false;
 		   results.memWrite = false;
@@ -452,7 +463,7 @@ int32_t addressCalculator(int32_t dataImm, bool branchAlu, bool branchControl, b
 
 int main () {
 	int32_t registers[32] = {0};
-	int32_t instMemory[1024] = {[0] = 0x00a00293};
+	int32_t instMemory[1024] = {[0] = 0xffe00293};
 	int32_t memory[8192];
 	int32_t currInst = 0;
 	int32_t nextInst = 0;
@@ -480,6 +491,6 @@ int main () {
 			registers[instDecodeResult.selD] = aluResult.aluOut;
 		nextInst = addressCalculator(instDecodeResult.dataIMM, aluResult.branch, instDecodeResult.branch, instDecodeResult.jumpReg, aluA, currInst);
 }
-	printf("%d\n", registers[5]);
+	printf("%d\n", registers[22]);
 	
 }

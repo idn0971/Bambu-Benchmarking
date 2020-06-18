@@ -178,21 +178,21 @@ struct instDecodeResults instDecode(int32_t dataInst) {
 
 	switch (results.aluop ) {
 		case 99 :
-		       if(READFROM(dataInst, 31, 1) == 1) {
+		       if(READFROM(dataInst, 31, 1) == -1) {
 			results.dataIMM = (0xFFFFF000 | (READFROM(dataInst, 7, 1) << 12) | (READFROM(dataInst, 25, 6) << 5) | (READFROM(dataInst, 8, 4) << 1) | 0);
 			} else {
 			results.dataIMM = ((READFROM(dataInst, 31, 1) << 31) | (READFROM(dataInst, 7, 1) << 12) | (READFROM(dataInst, 25, 6) << 5) | (READFROM(dataInst, 8, 4) << 1) | 0);
 			}
 			break;
 		case 111:
-		       if(READFROM(dataInst, 31, 1) == 1) {
+		       if(READFROM(dataInst, 31, 1) == -1) {
 			results.dataIMM = (0xFFF00000 | (READFROM(dataInst, 12, 8) << 12) | (READFROM(dataInst, 20, 1) << 11) | (READFROM(dataInst, 25, 6) << 5) | (READFROM(dataInst, 21, 4) << 1) | 0);
 			} else {
 			results.dataIMM = ((READFROM(dataInst, 31, 1) << 31) | (READFROM(dataInst, 12, 8) << 12) | (READFROM(dataInst, 20, 1) << 11) | (READFROM(dataInst, 25, 6) << 5) | (READFROM(dataInst, 21, 4) << 1) | 0);
 			}
 			break;
 		case 35:
-		       if(READFROM(dataInst, 31, 1) == 1) {
+		       if(READFROM(dataInst, 31, 1) == -1) {
 			       results.dataIMM = (0xFFFFF800 | (READFROM(dataInst, 25, 6) << 6) | (READFROM(dataInst, 8, 4) << 1) | READFROM(dataInst, 7, 1));
 			 } else {
 		 	       results.dataIMM = ((READFROM(dataInst, 31, 1) << 31) | (READFROM(dataInst, 25, 6) << 6) | (READFROM(dataInst, 8, 4) << 1) | READFROM(dataInst, 7, 1));
@@ -203,7 +203,7 @@ struct instDecodeResults instDecode(int32_t dataInst) {
 		       results.dataIMM = (READFROM(dataInst, 12, 20) << 12);
 		       break;
 		default:
-		       if(READFROM(dataInst, 31, 1) == 1) {
+		       if(READFROM(dataInst, 31, 1) == -1) {
 			       results.dataIMM = (0xFFFFF800 | READFROM(dataInst, 20, 11));
 		} else {
 		               results.dataIMM = (0x00000000 | READFROM(dataInst, 20, 11));
@@ -491,6 +491,6 @@ int main () {
 			registers[instDecodeResult.selD] = aluResult.aluOut;
 		nextInst = addressCalculator(instDecodeResult.dataIMM, aluResult.branch, instDecodeResult.branch, instDecodeResult.jumpReg, aluA, currInst);
 }
-	printf("%d\n", registers[22]);
+	printf("%d\n", registers[5]);
 	
 }

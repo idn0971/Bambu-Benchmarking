@@ -507,7 +507,7 @@ int32_t addressCalculator(int32_t dataImm, bool branchAlu, bool branchControl, b
 int main()
 {
 	int32_t registers[32] = {0};
-	int32_t instMemory[1024] = {[0] = 0x000000ef};
+	int32_t instMemory[1024] = {[0] = 0x21e00293, [4] = 0x00502023, [8] = 0x00002b03};
 	int32_t memory[8192];
 	int32_t currInst = 0;
 	int32_t nextInst = 0;
@@ -531,7 +531,7 @@ int main()
 			aluB = registers[instDecodeResult.selB];
 		}
 		aluResult = alu(aluA, aluB, aluOpcode, instDecodeResult.selB, currInst);
-		if (aluResult.memWrite == true)
+		if (aluResult.memWrite == true && instDecodeResult.memWren == true )
 		{
 			memory[aluResult.aluOut] = registers[instDecodeResult.selB];
 		}

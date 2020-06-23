@@ -124,6 +124,7 @@ int aluDecode(int32_t opcode, int32_t funct3, int32_t funct7)
 			aluOpcode = 31;
 			break;
 		}
+		break;
 	case 55:
 		aluOpcode = 14;
 		break;
@@ -361,7 +362,7 @@ struct aluResults alu(int32_t A, int32_t B, int OP, int imm, int32_t pc)
 		break;
 	case 7:
 		temp = READFROM(B, 0, 5);
-		results.aluOut = (uint32_t)A >> B;
+		results.aluOut = A >> B;
 		results.branch = false;
 		results.memWrite = false;
 		break;
@@ -454,6 +455,7 @@ struct aluResults alu(int32_t A, int32_t B, int OP, int imm, int32_t pc)
 		else
 			results.branch = false;
 		results.aluOut = 0;
+		break;
 	case 25:
 		results.memWrite = false;
 		if ((uint32_t)A < (uint32_t)B)
@@ -507,7 +509,9 @@ int32_t addressCalculator(int32_t dataImm, bool branchAlu, bool branchControl, b
 int main()
 {
 	int32_t registers[32] = {0};
-	int32_t instMemory[1024] = {[0] = 0x21e00293, [4] = 0x00502023, [8] = 0x00002b03};
+	int32_t instMemory[1024] = {[0] = 0x20000113, [4] = 0x00400513, [8] = 0x008000ef, [12] = 0x0400006f, [16] = 0xff810113, [20] = 0x00112223, [24] = 0x00a12023, [28] = 0x00100293,
+[32] = 0x00555463, [36] = 0x0180006f, [40] = 0xfff50513, [44] = 0xfe5ff0ef, [48] = 0x00012583, [52] = 0x02b50533, [56] = 0x0080006f, [60] = 0x00100513, [64] = 0x00412083, [68] = 0x00810113,
+[72] = 0x00008067, [76] = 0x00a00b33};	
 	int32_t memory[8192];
 	int32_t currInst = 0;
 	int32_t nextInst = 0;
@@ -518,6 +522,7 @@ int main()
 
 	while (instMemory[currInst] != 0 && currInst < 1024)
 	{
+		registers[0] = 0;
 		currInst = nextInst;
 		instDecodeResult = instDecode(instMemory[currInst]);
 		aluOpcode = aluDecode(instDecodeResult.aluop, instDecodeResult.funct3, instDecodeResult.funct7);
@@ -539,7 +544,7 @@ int main()
 		{
 			registers[instDecodeResult.selD] = memory[aluResult.aluOut];
 		}
-		else
+		else if(instDecodeResult.regDwe == true)
 		{
 			registers[instDecodeResult.selD] = aluResult.aluOut;
 		}

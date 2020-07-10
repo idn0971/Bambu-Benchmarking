@@ -100,7 +100,7 @@ module main_tb(clock);
     end
   end
   endfunction
-  parameter MEMSIZE = 1, MEM_var_419652_419512=4096, MEM_var_419678_419512=4096, MEM_var_420284_419532=4096, MEM_var_420408_419532=4096;
+  parameter MEMSIZE = 1, MEM_var_419713_419512=32768, MEM_var_419737_419512=32768, MEM_var_420170_419527=32768, MEM_var_420270_419527=32768, MEM_var_420328_419527=32768, MEM_var_420468_419527=32768;
   // AUXILIARY VARIABLES DECLARATION
   time startTime, endTime, sim_time;
   integer res_file, file, _r_, _n_, _i_, _addr_i_;
@@ -129,7 +129,7 @@ module main_tb(clock);
   reg [31:0] registered_return_port;
   
   // MODULE INSTANTIATION AND PORTS BINDING
-  main #(.MEM_var_419652_419512(4096), .MEM_var_419678_419512(4096), .MEM_var_420284_419532(4096), .MEM_var_420408_419532(4096)) main (.clock(clock), .reset(reset), .start_port(start_port), .done_port(done_port), .return_port(return_port));
+  main #(.MEM_var_419713_419512(32768), .MEM_var_419737_419512(32768), .MEM_var_420170_419527(32768), .MEM_var_420270_419527(32768), .MEM_var_420328_419527(32768), .MEM_var_420468_419527(32768)) main (.clock(clock), .reset(reset), .start_port(start_port), .done_port(done_port), .return_port(return_port));
   
   // Operation to be executed just one time
   initial

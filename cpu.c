@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <cpu.h>
 #define GETMASK(index, size) (((1 << (size)) - 1) << (index))
 #define READFROM(data, index, size) (((data)&GETMASK((index), (size))) >> (index))
 
@@ -550,5 +551,5 @@ int main()
 		}
 		nextInst = addressCalculator(instDecodeResult.dataIMM, aluResult.branch, instDecodeResult.branch, instDecodeResult.jumpReg, aluA, currInst);
 	}
-	printf("%d\n", registers[22]);
+	//printf("%d\n", registers[22]);
 }

@@ -5,7 +5,7 @@
 
 # COMPONENT: main
 
-verilator --cc --exe --Mdir HLS_output//verilator_beh/verilator_obj -Wno-fatal -Wno-lint -sv -O3 top.v HLS_output//simulation/testbench_main_main.cpp HLS_output//simulation/testbench_main_tb.v --top-module main_tb
+verilator --cc --exe --Mdir HLS_output//verilator_beh/verilator_obj -Wno-fatal -Wno-lint -sv -O3 top.sv top.v HLS_output//simulation/testbench_main_main.cpp HLS_output//simulation/testbench_main_tb.v --top-module main_tb
 if [ $? -ne 0 ]; then
    exit 1;
 fi

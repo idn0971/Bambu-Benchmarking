@@ -1,7 +1,7 @@
 /*
  * Politecnico di Milano
- * Code created using PandA - Version: PandA 0.9.6 - Revision 5e5e306b86383a7d85274d64977a3d71fdcff4fe-master - Date 2020-06-09T15:06:58
- * bambu executed with: bambu --compiler=I386_CLANG6 --simulate --simulator=VERILATOR ../cpu.c 
+ * Code created using PandA - Version: PandA 0.9.6 - Revision 5e5e306b86383a7d85274d64977a3d71fdcff4fe-master - Date 2020-06-25T16:51:38
+ * bambu executed with: bambu --compiler=I386_CLANG6 --simulate --simulator=VERILATOR --evaluation --device-name=EP2C70F896C6 ../cpu.c 
  */
 #define _FILE_OFFSET_BITS 64
 
